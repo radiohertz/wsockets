@@ -184,8 +184,6 @@ func SendMessage(message string, messageType Opcode) ([]byte, error) {
 	frame := make([]byte, 6+msgLength)
 	firstByte := GenerateOpcode(true, messageType)
 
-	// secondByte := uint8(0b10000101)
-
 	lengthAndMask := uint8(0)
 	lengthAndMask |= 1 << 7
 
@@ -220,6 +218,25 @@ func SendMessage(message string, messageType Opcode) ([]byte, error) {
 	}
 
 	return frame, nil
+}
+
+// "FakeRead" for now first reads from the socket in 2 different steps.
+//
+// First it reads for the opcode, mask and the `payload_length`.
+// Then based on the payload length it creates a new byte buffer of payload_length.
+// TODO:
+// Use this function in every read from the socket.
+func (a *App) FakeRead() []byte {
+	initRead := make([]byte, 2)
+	a.Conn.Read(initRead)
+	maskAndLen := uint8(initRead[1])
+	mask := ^(1 << 7)
+
+	maskAndLen &= uint8(mask)
+	dataBuf := make([]byte, maskAndLen)
+	a.Conn.Read(dataBuf)
+
+	return dataBuf
 }
 
 // Masks the payload data using a specific key.
