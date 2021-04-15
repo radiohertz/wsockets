@@ -26,7 +26,7 @@ func main() {
 		if input == "exit0" {
 			break
 		}
-		app.WriteMessage([]byte(input))
+		app.WriteMessage([]byte(input), gosock.Text)
 		log.Println("[SENT]: ", input)
 		data, err := app.ReadMessage()
 		if err != nil {

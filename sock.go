@@ -83,8 +83,8 @@ func (a *App) InitHandshake() {
 
 }
 
-func (a *App) WriteMessage(message []byte) (int, error) {
-	frame, err := SendMessage(string(message), false)
+func (a *App) WriteMessage(message []byte, opcode Opcode) (int, error) {
+	frame, err := SendMessage(string(message), opcode)
 	if err != nil {
 		return 0, err
 	}
@@ -103,7 +103,7 @@ func (a *App) ReadMessage() ([]byte, error) {
 
 func (a *App) Close() error {
 
-	frame, err := SendMessage("", true)
+	frame, err := SendMessage("", Close)
 	if err != nil {
 		panic(err)
 	}
@@ -122,17 +122,14 @@ func (a *App) Close() error {
 	return nil
 }
 
-func SendMessage(message string, closeFrame bool) ([]byte, error) {
+func SendMessage(message string, messageType Opcode) ([]byte, error) {
 	msgLength := len(message)
 	if msgLength > 125 {
 		return nil, errors.New("payload length above 125 bytes not yet supported")
 	}
 
 	frame := make([]byte, 6+msgLength)
-	firstByte := uint8(0b10000001)
-	if closeFrame {
-		firstByte = uint8(0b10001000)
-	}
+	firstByte := GenerateOpcode(true, messageType)
 
 	// secondByte := uint8(0b10000101)
 
