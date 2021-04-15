@@ -121,7 +121,7 @@ func (a *App) Ping() {
 // This also closes the websocket and underlying TCP connection.
 func (a *App) Close() error {
 
-	frame, err := SendMessage("", Close)
+	frame, err := SendMessage("", CloseFrame)
 	if err != nil {
 		panic(err)
 	}

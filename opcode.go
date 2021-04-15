@@ -8,24 +8,24 @@ type Opcode uint8
 const (
 
 	// denotes a continuation frame
-	Cont Opcode = iota
+	ContFrame Opcode = iota
 
 	// denotes a text frame
-	Text
+	TextFrame
 
 	// denotes a binary frame
-	Binary
+	BinaryFrame
 
 	// 3-7 reserved for further non-control frames.
 
 	// denotes a connection close
-	Close = iota + 5
+	CloseFrame = iota + 5
 
 	// denotes a ping
-	Ping
+	PingFrame
 
 	// denotes a pong
-	Pong
+	PongFrame
 )
 
 func GenerateOpcode(fin bool, opcode Opcode) uint8 {

@@ -6,7 +6,7 @@ import (
 
 func TestGenerateOpcode(t *testing.T) {
 
-	opcode := GenerateOpcode(true, Text)
+	opcode := GenerateOpcode(true, TextFrame)
 	if opcode != 129 {
 		t.Error("Expected: 129, got: ", opcode)
 	}

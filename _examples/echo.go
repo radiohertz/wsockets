@@ -13,7 +13,7 @@ import (
 func main() {
 
 	ep := "echo.websocket.org"
-	app := gosock.NewApp(ep, 80, nil)
+	app := gosock.NewApp(ep, 443, nil)
 	//app := gosock.NewApp("localhost", 6000, nil)
 	app.InitHandshake()
 
@@ -26,7 +26,7 @@ func main() {
 		if input == "exit0" {
 			break
 		}
-		app.WriteMessage([]byte(input), gosock.Text)
+		app.WriteMessage([]byte(input), gosock.TextFrame)
 		log.Println("[SENT]: ", input)
 		data, err := app.ReadMessage()
 		if err != nil {
