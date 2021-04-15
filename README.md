@@ -16,7 +16,7 @@ The repo comes with a echo example.
 
 ## Usage:
 
-```go
+```zsh
 git clone https://github.com/segfult/gosock
 cd gosock/
 go run _examples/echo.go
