@@ -1,9 +1,11 @@
 package gosock
 
 import (
+	"bytes"
 	"context"
 	"crypto/tls"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -102,14 +104,43 @@ func (a *App) WriteMessage(message []byte, opcode Opcode) (int, error) {
 
 // Read a message from the websocket server.
 // Will return a buffer of data on success.
-func (a *App) ReadMessage() ([]byte, error) {
+func (a *App) ReadMessage() (*Opcode, []byte, error) {
 	buf := make([]byte, 1024)
 
 	_, err := a.Conn.Read(buf)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return buf[2:], nil
+
+	opCode := uint8(buf[0])
+	maskedInt := ^(1 << 7)
+	mask := uint8(maskedInt)
+	opCode &= mask
+
+	op := Opcode(opCode)
+
+	return &op, buf[2:], nil
+}
+
+func (a *App) WriteJson(v interface{}) error {
+	jsonData, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	data, err := SendMessage(string(jsonData), TextFrame)
+	if err != nil {
+		return err
+	}
+	_, err = a.Conn.Write(data)
+	return err
+}
+
+func (a *App) ReadJson(v interface{}) error {
+	buf := make([]byte, 1024)
+	a.Conn.Read(buf)
+
+	reqData := buf[2:]
+	return json.NewDecoder(bytes.NewReader(reqData)).Decode(v)
 }
 
 // Pings the websocket server.
