@@ -32,6 +32,9 @@ func NewApp(uri string, port uint16, ctx *context.Context) *App {
 	}
 }
 
+// Start the websocket hanshake process.
+// FIXME:
+// Will return an error if it fails.
 func (a *App) InitHandshake() {
 	// Ref:
 	/*
@@ -87,6 +90,8 @@ func (a *App) InitHandshake() {
 
 }
 
+// Send a message to the websocket server.
+// The opcode decides the actual type of the message.
 func (a *App) WriteMessage(message []byte, opcode Opcode) (int, error) {
 	frame, err := SendMessage(string(message), opcode)
 	if err != nil {
@@ -95,6 +100,8 @@ func (a *App) WriteMessage(message []byte, opcode Opcode) (int, error) {
 	return a.Conn.Write(frame)
 }
 
+// Read a message from the websocket server.
+// Will return a buffer of data on success.
 func (a *App) ReadMessage() ([]byte, error) {
 	buf := make([]byte, 1024)
 
@@ -105,6 +112,13 @@ func (a *App) ReadMessage() ([]byte, error) {
 	return buf[2:], nil
 }
 
+// Pings the websocket server.
+func (a *App) Ping() {
+
+}
+
+// Send a close frame to the websocket server.
+// This also closes the websocket and underlying TCP connection.
 func (a *App) Close() error {
 
 	frame, err := SendMessage("", Close)
@@ -126,6 +140,7 @@ func (a *App) Close() error {
 	return nil
 }
 
+// Prepares the message and other required parts and create []byte thar represents a websocket frame.
 func SendMessage(message string, messageType Opcode) ([]byte, error) {
 	msgLength := len(message)
 	if msgLength > 125 {
@@ -173,6 +188,9 @@ func SendMessage(message string, messageType Opcode) ([]byte, error) {
 	return frame, nil
 }
 
+// Masks the payload data using a specific key.
+// Key is supposed to be random and will be sent in the websocket frame.
+// Only clients are required to frame the data they send.
 func MaskData(data []byte, key []byte) []byte {
 	/*
 	   	MASKING ALGO:
