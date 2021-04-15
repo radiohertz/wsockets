@@ -28,7 +28,11 @@ func main() {
 		}
 		app.WriteMessage([]byte(input), gosock.TextFrame)
 		log.Println("[SENT]: ", input)
-		data, err := app.ReadMessage()
+		mt, data, err := app.ReadMessage()
+		if *mt == gosock.TextFrame {
+			log.Println("Got correct frame")
+		}
+		fmt.Println(*mt)
 		if err != nil {
 			panic(err)
 		}
