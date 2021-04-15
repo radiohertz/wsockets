@@ -2,6 +2,7 @@ package gosock
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -57,7 +58,9 @@ func (a *App) InitHandshake() {
 
 	uri := fmt.Sprintf("%s:%d", a.Uri, a.Port)
 
-	conn, err := net.Dial("tcp", uri)
+	conf := &tls.Config{}
+
+	conn, err := tls.Dial("tcp", uri, conf)
 	if err != nil {
 		panic(err)
 	}
@@ -78,6 +81,7 @@ func (a *App) InitHandshake() {
 	}
 	log.Printf("[LOG]: Read %d bytes\n", n)
 	a.Conn = conn
+	fmt.Println(string(buf))
 
 	// check if handshake is successful.
 
