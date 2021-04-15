@@ -116,7 +116,7 @@ func (a *App) Close() error {
 	buf := make([]byte, 1024)
 	a.Conn.Read(buf)
 	if buf[0] != 0x88 {
-		return errors.New("Failed to close: got invalid frame ig")
+		return fmt.Errorf("failed to close: expected %d, got %d", 0b10001000, buf[0])
 	}
 	a.Conn.Close()
 	return nil

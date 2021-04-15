@@ -10,6 +10,19 @@ Implementation of the websocket protocol.
 - [ ] Ping
 - [ ] TLS 
 
-# References
+# Examples
 
+The repo comes with a echo example.
+
+## Usage:
+
+```go
+git clone https://github.com/segfult/gosock
+cd gosock/
+go run _examples/echo.go
+```
+
+![echo](echo.png "Simple echo client")
+
+# References
 - https://tools.ietf.org/html/rfc6455

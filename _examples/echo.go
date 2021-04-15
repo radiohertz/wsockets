@@ -1,26 +1,42 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"os"
+	"strings"
 
 	"github.com/segfult/gosock"
 )
 
 func main() {
 
-	app := gosock.NewApp("echo.websocket.org", 80, nil)
+	ep := "echo.websocket.org"
+	app := gosock.NewApp(ep, 80, nil)
 	//app := gosock.NewApp("localhost", 6000, nil)
 	app.InitHandshake()
-	app.WriteMessage([]byte("Hello"))
-	data, err := app.ReadMessage()
+
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Printf("[DATA to send]: ")
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSuffix(input, "\n")
+		if input == "exit0" {
+			break
+		}
+		app.WriteMessage([]byte(input))
+		log.Println("[SENT]: ", input)
+		data, err := app.ReadMessage()
+		if err != nil {
+			panic(err)
+		}
+		log.Printf("[RECV from %s]: %s\n", ep, string(data))
+	}
+
+	err := app.Close()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(data))
-
-	err = app.Close()
-	if err != nil {
-		panic(err)
-	}
-
 }
