@@ -43,14 +43,14 @@ func main() {
 				D:  0,
 			}
 
-			err := app.WriteJson(beat)
+			err := app.WriteJSON(beat)
 			if err != nil {
 				panic(err)
 			}
 			log.Println("HEARTBEAT SENT")
 
 			beatAck := &GatewayMessages{}
-			err = app.ReadJson(beatAck)
+			err = app.ReadJSON(beatAck)
 			if err != nil {
 				panic(err)
 			}

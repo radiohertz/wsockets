@@ -122,7 +122,8 @@ func (a *App) ReadMessage() (*Opcode, []byte, error) {
 	return &op, buf[2:], nil
 }
 
-func (a *App) WriteJson(v interface{}) error {
+// Write a struct with json tags to the websocket.
+func (a *App) WriteJSON(v interface{}) error {
 	jsonData, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -135,10 +136,12 @@ func (a *App) WriteJson(v interface{}) error {
 	return err
 }
 
-func (a *App) ReadJson(v interface{}) error {
+// Read from a struct and encode it in a json tagged struct.
+func (a *App) ReadJSON(v interface{}) error {
 	buf := make([]byte, 1024)
-	a.Conn.Read(buf)
 
+	//FIXME: check for errors.
+	a.Conn.Read(buf)
 	reqData := buf[2:]
 	return json.NewDecoder(bytes.NewReader(reqData)).Decode(v)
 }
