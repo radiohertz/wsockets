@@ -148,6 +148,7 @@ func (a *App) ReadJSON(v interface{}) error {
 
 // Pings the websocket server.
 func (a *App) Ping() {
+	//	op := GenerateOpcode(true, PingFrame)
 
 }
 
@@ -185,17 +186,9 @@ func SendMessage(message string, messageType Opcode) ([]byte, error) {
 	firstByte := GenerateOpcode(true, messageType)
 
 	lengthAndMask := uint8(0)
-	lengthAndMask |= 1 << 7
+	lengthAndMask = uint8(msgLength)
 
-	fromBit := 6
-	lengthInBits := fmt.Sprintf("%7b", msgLength)
-
-	for _, v := range lengthInBits {
-		if v == '1' {
-			lengthAndMask |= 1 << fromBit
-		}
-		fromBit--
-	}
+	lengthAndMask |= (1 << 7)
 
 	msg := []byte(message)
 

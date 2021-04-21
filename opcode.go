@@ -1,7 +1,5 @@
 package gosock
 
-import "fmt"
-
 // The opcodes used by websocket protocol.
 type Opcode uint8
 
@@ -29,16 +27,11 @@ const (
 )
 
 func GenerateOpcode(fin bool, opcode Opcode) uint8 {
-	finAndOpcode := uint8(0b10000000)
+	finAndOpcode := uint8(opcode)
 
-	binRep := fmt.Sprintf("%4b", opcode)
-
-	fromBit := 3
-	for _, v := range binRep {
-		if v == '1' {
-			finAndOpcode |= 1 << fromBit
-		}
-		fromBit--
+	if fin {
+		finAndOpcode |= (1 << 7)
 	}
+
 	return finAndOpcode
 }
